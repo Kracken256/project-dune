@@ -346,6 +346,8 @@ namespace dune
                 if (bytes_read < AES_BLOCK_SIZE)
                     break;
             }
+            fclose(infile);
+            fclose(outfile);
         }
 
         static void encrypt_files(std::string enc_key, std::vector<std::string> excluded_hashes, std::string user_home)
