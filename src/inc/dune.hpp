@@ -329,14 +329,21 @@ namespace dune
             AES_set_encrypt_key(ckey, 256, &key);
             int num = 0;
 
+            EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+            const EVP_CIPHER *cipher = EVP_aes_256_ctr();
+            EVP_EncryptInit(ctx, cipher, ckey, ivec);
             while (1)
             {
                 bytes_read = fread(indata, 1, AES_BLOCK_SIZE, infile);
-                AES_cbc_encrypt(indata, outdata, bytes_read, &key, ivec, AES_ENCRYPT);
+                // AES_cbc_encrypt(indata, outdata, bytes_read, &key, ivec, AES_ENCRYPT);
+                int outlen;
+                EVP_EncryptUpdate(ctx, outdata, &outlen, indata, bytes_read);
                 bytes_written = fwrite(outdata, 1, bytes_read, outfile);
                 if (bytes_read < AES_BLOCK_SIZE)
                     break;
             }
+            EVP_CIPHER_CTX_free(ctx);
+            EVP_CIPHER_free((EVP_CIPHER*)cipher);
             fclose(infile);
             fclose(outfile);
         }
