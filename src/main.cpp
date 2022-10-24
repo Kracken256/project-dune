@@ -29,10 +29,6 @@ int main(int argc, char *argv[])
     ack.i_accept_the_risks_and_consequences_of_my_actions = true;
     ack.i_understand_it_is_illegel = true;
     dune.attack(ack, "./");
-    while (!dune.verify_done())
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-    }
     printf("All done\n");
     return 0;
 }
