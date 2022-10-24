@@ -110,13 +110,12 @@ std::vector<char> HexToBytes(const std::string &hex)
 int main(int argc, char *argv[])
 {
     std::vector<std::string> arguments(argv + 1, argv + argc);
-
     std::string enc_key;
     for (int i = 0; i < arguments.size(); i++)
     {
         if (arguments[i] == "--key")
         {
-            if (arguments.size() > (i))
+            if (arguments.size() > (i+1))
             {
                 enc_key = arguments[i + 1];
             }
