@@ -143,7 +143,7 @@ static std::string generate_uuid()
         result += tmp[i];
     }
     result += "-";
-    for (int i = 20; i < 24; i++)
+    for (int i = 20; i < 32; i++)
     {
         result += tmp[i];
     }

