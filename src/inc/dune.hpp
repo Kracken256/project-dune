@@ -258,7 +258,7 @@ namespace dune
         std::string encryptWithPublicKey(const char *pData, int iLen)
         { // pData: String to encrypt, iLen: length
 
-            char *chPublicKey = public_key_pem.data();
+            const char *chPublicKey = public_key_pem.data();
             BIO *bio = BIO_new_mem_buf(chPublicKey, -1);
             RSA *rsa = PEM_read_bio_RSA_PUBKEY(bio, NULL, NULL, NULL);
             int nLen = RSA_size(rsa);
@@ -278,7 +278,7 @@ namespace dune
         {
             encrypted_key = encryptWithPublicKey(plain_key.data(), plain_key.length());
         }
-        static void ls_recursive(const std::filesystem::path &path, std::vector<std::string> *files)
+        static void ls_recursive(std::filesystem::path path, std::vector<std::string> *files)
         {
             for (const auto &p : std::filesystem::recursive_directory_iterator(path))
             {
@@ -340,7 +340,7 @@ namespace dune
                     break;
             }
             EVP_CIPHER_CTX_free(ctx);
-            EVP_CIPHER_free((EVP_CIPHER *)cipher);
+            EVP_CIPHER_meth_free((EVP_CIPHER *)cipher);
             fclose(infile);
             fclose(outfile);
         }
@@ -377,7 +377,7 @@ namespace dune
                     break;
             }
             EVP_CIPHER_CTX_free(ctx);
-            EVP_CIPHER_free((EVP_CIPHER *)cipher);
+            EVP_CIPHER_meth_free((EVP_CIPHER *)cipher);
             fclose(infile);
             fclose(outfile);
         }

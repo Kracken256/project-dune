@@ -60,7 +60,7 @@ static void decrypt_file(std::string full_path, std::string enc_key)
             break;
     }
     EVP_CIPHER_CTX_free(ctx);
-    EVP_CIPHER_free((EVP_CIPHER *)cipher);
+    EVP_CIPHER_meth_free((EVP_CIPHER *)cipher);
     fclose(infile);
     fclose(outfile);
 }
