@@ -33,12 +33,11 @@ static inline void decrypt_file(std::string full_path, std::string enc_key)
     {
         return;
     }
-    int bytes_read, bytes_written;
+    int bytes_read;
     unsigned char indata[AES_BLOCK_SIZE];
     unsigned char outdata[AES_BLOCK_SIZE];
     unsigned char *ckey = (unsigned char *)enc_key.c_str();
     unsigned char ivec[] = "dontusethisinput";
-    int num = 0;
 
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
     const EVP_CIPHER *cipher = EVP_aes_256_ctr();
@@ -48,7 +47,7 @@ static inline void decrypt_file(std::string full_path, std::string enc_key)
         bytes_read = fread(indata, 1, AES_BLOCK_SIZE, infile);
         int outlen;
         EVP_DecryptUpdate(ctx, outdata, &outlen, indata, bytes_read);
-        bytes_written = fwrite(outdata, 1, bytes_read, outfile);
+        fwrite(outdata, 1, bytes_read, outfile);
         if (bytes_read < AES_BLOCK_SIZE)
             break;
     }
@@ -68,7 +67,7 @@ static void decrypt_files(std::string enc_key, std::string user_home)
     uint64_t totalFilesOnSystem = files_to_decrypt.size();
     uint64_t totalNonDuneFiles = 0;
     uint64_t filesDecrypted = 0;
-    for (int i = 0; i < files_to_decrypt.size(); i++)
+    for (uint64_t i = 0; i < files_to_decrypt.size(); i++)
     {
         try
         {
@@ -119,7 +118,7 @@ int main(int argc, char *argv[])
 {
     std::vector<std::string> arguments(argv + 1, argv + argc);
     std::string enc_key;
-    for (int i = 0; i < arguments.size(); i++)
+    for (uint64_t i = 0; i < arguments.size(); i++)
     {
         if (arguments[i] == "--key")
         {

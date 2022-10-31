@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
     std::vector<std::string> exempt_files = std::vector<std::string>();
     exempt_files.push_back("8521b4c405542a10e732466cbe67fc4f1848c3de");
     exempt_files.push_back("c9831e93135c07e60e86d0cea63a878cb512764f");
+
     dune::Dune dune = dune::Dune(2.0, "XMR", "your address here", "You have been pwned!", notes, "tech@anon.gov", public_key, exempt_files);
     dune::Acknowledgement ack;
     ack.are_you_sure_you_want_to_do_this = true;
