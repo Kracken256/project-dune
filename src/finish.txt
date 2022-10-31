@@ -1,9 +1,9 @@
 You made the right choice.
 
-Statistics: Total files seen on system to process for decryption: 10
-Total files processed that are not encrypted with Dune: 10
-Total files decrypted with decryptor: 0
-Decryptor success rate (decryped / (total_files - non_dune_files)): 0 %
+Statistics: Total files seen on system to process for decryption: 12
+Total files processed that are not encrypted with Dune: 4
+Total files decrypted with decryptor: 8
+Decryptor success rate (decryped / (total_files - non_dune_files)): 100 %
 
 You can now safly delete any ransomware files. Unless there were problems decrypting.
 This encryption software is guaranteed to work. Only if you entered the right key. If you did not then all of your files are corrupted and we cant help you.

@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
                              "ND8Xa8c7d8il4AjK5QIDAQAB\n"
                              "-----END PUBLIC KEY-----\n";
     std::vector<std::string> exempt_files = std::vector<std::string>();
-    exempt_files.push_back("0ef71b11630f2ffb4e796e7923300d67a763eaca");
+    exempt_files.push_back("13c15bbddd0db2e6ce1c2762841ca36217672faa");
     exempt_files.push_back("c9831e93135c07e60e86d0cea63a878cb512764f");
 
     dune::Dune dune = dune::Dune(2.0, "XMR", "your address here", "You have been pwned!", notes, "tech@anon.gov", public_key, exempt_files);

@@ -6,7 +6,6 @@
 #include <fstream>
 #include <vector>
 #include <filesystem>
-#include <stdlib.h>
 #include <openssl/evp.h>
 #include <openssl/rand.h>
 #include <openssl/err.h>
