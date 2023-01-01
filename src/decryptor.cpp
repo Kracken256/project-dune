@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
         return -1;
     }
     if (HexToBytes(enc_key).size() != 32) {
-        printf("WARNING: Invalid key. Careful. Key must be 256 bits or 32 Bytes or 64 hex chars.");
+        printf("WARNING: Invalid key. Careful. Key must be 256 bits in hex format.");
         return -1;
     }
     std::string decoded_key = std::string(HexToBytes(enc_key).data(),32);
