@@ -60,17 +60,17 @@ The address to pay is:
 
 your address here
 
-This address is specific to this attack. If you have multiple attacks paying another address will not help you get your files back. The full amount or more must be paid to the XMR address specified.
-DO NOT MODIFY THIS OR ALL YOUR FILES WILL BE LOST (It is the RSA encrypted key for decryption)
+This address is specific to this attack. If you have multiple attacks pending paying another address will not help you regain your files. The full amount or more must be paid to the XMR address specified.
+DO NOT MODIFY THIS, OR ALL YOUR FILES WILL BE LOST (It is the RSA encrypted key for decryption)
 
-GJXy2U6fJlThFBb9a1WwQFGfNzAlkpAmYTyrd+zddNJyxwhJrrwTStvtOM40OMtvLNiGWhIFAU7kFrQnmxzuntFse1+hzqmxz3xgUI+l5KiVgXiNvaLDmvGdvjCGg0ADjQcD/mkCW0FIIdtXXjNr+2seACPCFjYEajryMuPXekE=
+jdnXNse+wTWGPQAec/5oLR/albnGS5f6QiOxpvY15CaEJgB7RsYf7oV/y1BclATw5MtElCZmN+mQFs0KaYGr+/KF6xDzGgfB0bpCax9HzVyBl0uGpOIElaZgUI1R2KkNm80ggX7bSH6+c23BiGUTGTac2BCpvSDfe6KVVWoZkZ4=
 
-Send this whole file to this email address AFTER you have paid the ransom: your-email@dnmx.org
+Send this whole file to this email address AFTER you have paid the ransom: tech@anon.gov
 
 If you contact this email before the ransom is paid in full it will likely be increased.
 
 
-This is your victim id: d89ecb59-173c-d8de-5714-3cfa.
+This is your victim id: 4a357c9d-3868-4b84-afb0-26661ac9f2e6.
 ```
 
 Enjor the easy integration.
