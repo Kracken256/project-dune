@@ -36,10 +36,10 @@ int main(int argc, char *argv[])
 }
 ```
 
-The Dune ransomware class contains two important methods. The attack method and the constructor. The constructor accepts several required arguments to tell the malware how to behave (Ex: what crypto address to demand). The most important parameter is the PEM formatted RSA key. The RSA public key must be valid, or behavior is not guaranteed. The class requires a string vector containing absolute or relative file paths to be supplied to create many ransom notes. More, the better. The class also takes an argument specifying the amount and type of cryptocurrency to be ransomed. It also accepts a message to include in the ransom file and can be left as an empty string. Also, there is an email parameter to have so that the victim can contact the ransomer.
+The Dune ransomware class contains two essential methods. The attack method and the constructor. The constructor accepts several required arguments to tell the malware how to behave (Ex: what crypto address to demand). The most critical parameter is the PEM formatted RSA key. The RSA public key must be valid, or behavior is not guaranteed. The class requires a string vector containing absolute or relative file paths to be supplied to create many ransom notes. The more, the better. The class also takes an argument specifying the amount and type of cryptocurrency to be ransomed. It also accepts a message to include in the ransom file and can be left as an empty string. Also, there is an email parameter so the victim can contact the ransomer.
 
 ## Notes
-The attack method creates a thread that will encrypt all files in the background. Since this could take a while, you will need to create a while loop to wait until verify_done returns true. Remember to sleep between calls to it, or it will slow the encryption. You must do this to keep the thread alive, or encryption will likely result in corrupt files and no profit.
+The attack method creates a thread to encrypt all files in the background. Since this could take a while, you must create a while loop to wait until verify_done returns `true`. Remember to sleep between calls to it, or it will slow the encryption. It would be best if you did this to keep the thread alive, or encryption will likely result in corrupt files and no profit.
 
 Example:
 ```cpp
@@ -73,4 +73,4 @@ If you contact this email before the ransom is paid in full it will likely be in
 This is your victim id: 4a357c9d-3868-4b84-afb0-26661ac9f2e6.
 ```
 
-Enjor the easy integration.
+Enjoy the easy integration.
