@@ -1,6 +1,5 @@
 # project-dune
-An advanced customizable ransomware solution for Blackhat hackers.
-
+An customizable ransomware for hackers. 
 ## Usage
 
 Example integration
